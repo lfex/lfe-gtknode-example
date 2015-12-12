@@ -88,7 +88,7 @@ loop(St) ->
     {?MODULE,{signal,{dialogb,_}}}    -> loop(hide_about(St));
     %% user deleted about dialog
     {?MODULE,{signal,{dialog1,_}}}    -> loop(hide_about(St));
-    %% we got data from the top_top process
+    %% we got data from the top_data process
     {data,Data}                       -> loop(update(St,Data));
     %% quit from the erlang shell
     quit                              -> quit();
@@ -118,8 +118,8 @@ state_conn(St) ->
   ssnd(disconnect,'Gtk_widget_set_sensitive',[true]),
   St.
 
-do_connect() -> top_top:assert(self()).
-do_disconnect() -> top_top:stop().
+do_connect() -> top_data:assert(self()).
+do_disconnect() -> top_data:stop().
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear(#treeview{store=LS}) ->

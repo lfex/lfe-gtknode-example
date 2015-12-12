@@ -1,11 +1,11 @@
 %%%-------------------------------------------------------------------
-%%% File    : top_top.erl
+%%% File    : top_data.erl
 %%% Author  : Mats Cronqvist <locmacr@mwlx084>
 %%% Description :
 %%%
 %%% Created : 11 Aug 2005 by Mats Cronqvist <locmacr@mwlx084>
 %%%-------------------------------------------------------------------
--module(top_top).
+-module(top_data).
 
 -export([assert/1,stop/0]).
 -import(lists,[flatten/1,sublist/2,sort/2]).
