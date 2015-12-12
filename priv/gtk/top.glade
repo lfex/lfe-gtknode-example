@@ -8,7 +8,7 @@
     <property name="type_hint">dialog</property>
     <property name="has_separator">True</property>
     <signal name="delete_event" handler="gn_sighandler"/>
-    <signal name="delete_event" handler="gtk_true" />
+    <signal name="delete_event" handler="gtk_true"/>
     <child internal-child="vbox">
       <widget class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -17,9 +17,11 @@
           <widget class="GtkHButtonBox" id="dialog-action_area1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="homogeneous">True</property>
+            <property name="layout_style">center</property>
             <child>
               <widget class="GtkButton" id="dialogb">
-                <property name="label">gtk-ok</property>
+                <property name="label">gtk-close</property>
                 <property name="response_id">-5</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -27,8 +29,9 @@
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">False</property>
+                <property name="relief">half</property>
                 <property name="use_stock">True</property>
-                <signal name="released" handler="gn_sighandler" />
+                <signal name="released" handler="gn_sighandler"/>
               </widget>
               <packing>
                 <property name="expand">False</property>
@@ -52,8 +55,9 @@
             <property name="ypad">10</property>
             <property name="label" translatable="yes">A simple "top" Erlang processes example for gtkNode.
 
-© 2006 Mats Cronqvist
-© 2015 Duncan McGreggor</property>
+© 2006 Mats Cronqvist (Erlang version)
+© 2015 Duncan McGreggor (LFE version)</property>
+            <property name="justify">center</property>
             <property name="wrap">True</property>
           </widget>
           <packing>
@@ -71,8 +75,8 @@
     <property name="title" translatable="yes">Erlang top</property>
     <property name="default_width">300</property>
     <property name="default_height">600</property>
-    <signal name="delete_event" handler="gn_sighandler" />
-    <signal name="delete_event" handler="gtk_true" />
+    <signal name="delete_event" handler="gn_sighandler"/>
+    <signal name="delete_event" handler="gtk_true"/>
     <child>
       <widget class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -96,7 +100,7 @@
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Connect</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="gn_sighandler" />
+                        <signal name="activate" handler="gn_sighandler"/>
                       </widget>
                     </child>
                     <child>
@@ -105,7 +109,7 @@
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Disconnect</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="gn_sighandler" />
+                        <signal name="activate" handler="gn_sighandler"/>
                       </widget>
                     </child>
                     <child>
@@ -115,7 +119,7 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="gn_sighandler" />
+                        <signal name="activate" handler="gn_sighandler"/>
                       </widget>
                     </child>
                   </widget>
@@ -137,7 +141,7 @@
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">_About</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="gn_sighandler" />
+                        <signal name="activate" handler="gn_sighandler"/>
                       </widget>
                     </child>
                   </widget>
