@@ -139,8 +139,19 @@ populate_list_row(LS,[Col|Cols],[Data|Datas]) ->
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 gladefile() ->
-  GF = proplists:get_value(source,?MODULE:module_info(compile)),
-  filename:join(filename:dirname(GF),?MODULE)++".glade".
+  filename:join([get_priv_dir(), "gtk", ?MODULE]) ++ ".glade".
+
+get_priv_dir() ->
+  get_priv_dir(top).
+
+get_priv_dir(App) ->
+  case code:priv_dir(App) of
+    {error, bad_name} ->
+      PrivDir = "priv";
+    PrivDir ->
+      ok
+  end,
+  PrivDir.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ssnd([],Cmd,Args) -> snd(Cmd,Args);
