@@ -15,6 +15,7 @@
 -record(treeview,{store,cols=[]}).
 -record(col,{title,attr,data_col,type}).
 
+-define(GTK_VERSION, "gtk-2.0").
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % start() ->
 %   case whereis(?MODULE) of
@@ -30,8 +31,8 @@ init() ->
   gtknode:start(?MODULE),
 
   %% load the glade file into the c-node
-  ssnd([],'GN_glade_init',[gladefile()]),
-
+  ssnd([],'GN_glade_init',[get_gladefile()]),
+  ssnd([], 'Gtk_rc_parse', [get_rcfile()]),
   loop(init_gui()).
 
 init_gui() ->
@@ -138,8 +139,11 @@ populate_list_row(LS,[Col|Cols],[Data|Datas]) ->
   populate_list_row(LS,Cols,Datas).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-gladefile() ->
-  filename:join([get_priv_dir(), "gtk-2.0", "top"]) ++ ".glade".
+get_gladefile() ->
+  filename:join([get_priv_dir(), ?GTK_VERSION, "top"]) ++ ".glade".
+
+get_rcfile() ->
+  filename:join([get_priv_dir(), ?GTK_VERSION, "gtkrc"]).
 
 get_priv_dir() ->
   get_priv_dir(top).
