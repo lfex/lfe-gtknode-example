@@ -11,7 +11,7 @@
 
 -import(filename,[join/1,dirname/1]).
 
--record(st, {statusbar_ctxt,treeview}).
+-record(state, {statusbar_ctxt,treeview}).
 -record(treeview,{store,cols=[]}).
 -record(col,{title,attr,data_col,type}).
 
@@ -35,13 +35,13 @@ init() ->
   loop(init_gui()).
 
 init_gui() ->
-  treeview_init(state_init(#st{})).
+  treeview_init(state_init(#state{})).
 
 state_init(St) ->
   %% init the status bar
   Id = ssnd(statusbar1,'Gtk_statusbar_get_context_id',["state"]),
   ssnd(statusbar1,'Gtk_statusbar_push',[Id,"connected"]),
-  state_disc(St#st{statusbar_ctxt = Id}).
+  state_disc(St#state{statusbar_ctxt = Id}).
 
 treeview_init(St) ->
   %% the tree view columns
@@ -57,7 +57,7 @@ treeview_init(St) ->
   %% associate the model with the view
   ssnd(treeview1,'Gtk_tree_view_set_model',[LS]),
 
-  St#st{treeview=#treeview{cols = Cols,
+  St#state{treeview=#treeview{cols = Cols,
                            store = LS}}.
 
 treeview_column(#col{title=Title,attr=Attr,data_col=Col}) ->
@@ -103,23 +103,23 @@ hide_about(St) -> ssnd(dialog1,'Gtk_widget_hide',[]),St.
 show_about(St) -> ssnd(dialog1,'Gtk_widget_show',[]),St.
 update(St,Data) ->
   ssnd(treeview1,'Gtk_widget_freeze_child_notify',[]),
-  clear(St#st.treeview),
-  populate(St#st.treeview,Data),
+  clear(St#state.treeview),
+  populate(St#state.treeview,Data),
   ssnd(treeview1,'Gtk_widget_thaw_child_notify',[]),
   St.
 state_disc(St) ->
-  ssnd(statusbar1,'Gtk_statusbar_push',[St#st.statusbar_ctxt,"disconnected"]),
+  ssnd(statusbar1,'Gtk_statusbar_push',[St#state.statusbar_ctxt,"disconnected"]),
   ssnd(connect,'Gtk_widget_set_sensitive',[true]),
   ssnd(disconnect,'Gtk_widget_set_sensitive',[false]),
   St.
 state_conn(St) ->
-  ssnd(statusbar1,'Gtk_statusbar_pop',[St#st.statusbar_ctxt]),
+  ssnd(statusbar1,'Gtk_statusbar_pop',[St#state.statusbar_ctxt]),
   ssnd(connect,'Gtk_widget_set_sensitive',[false]),
   ssnd(disconnect,'Gtk_widget_set_sensitive',[true]),
   St.
 
-do_connect() -> top_data:assert(self()).
-do_disconnect() -> top_data:stop().
+do_connect() -> 'top-data':assert(self()).
+do_disconnect() -> 'top-data':stop().
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear(#treeview{store=LS}) ->
