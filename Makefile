@@ -1,3 +1,4 @@
+GTK2_RC_FILES=priv/gtk-2.0/gtkrc
 
 all: clean deps build run
 

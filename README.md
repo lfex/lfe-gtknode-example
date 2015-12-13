@@ -4,9 +4,10 @@
 ## Dependencies
 
 * Erlang
-* rebar
-* GNU make
-* libglade2 and its development files
+* ``rebar``
+* GNU ``make``
+* ``libglade2`` and its development files
+* ``gtk2-engines`` and ``gtk2-engines-pixbuf`` to support the dark theme
 
 
 ## Usage
@@ -22,3 +23,5 @@ This will:
 1. Bring up a GTK window.
 
 In the ``File`` menu, click ``Connect``. In a few seconds you should see a list of running Erlang processes.
+
+To disable the dark theme, simply comment out the ``#GTK2_RC_FILES`` setting in the ``Makefile``.
