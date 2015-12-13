@@ -5,9 +5,9 @@
 %%%
 %%% Created :  9 Aug 2005 by Mats Cronqvist <locmacr@mwlx084>
 %%%-------------------------------------------------------------------
--module(top).
+-module(top_gui).
 
--export([start/0,stop/0]).
+-export([init/0,ssnd/3]).
 
 -import(filename,[join/1,dirname/1]).
 
@@ -16,13 +16,13 @@
 -record(col,{title,attr,data_col,type}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-start() ->
-  case whereis(?MODULE) of
-    undefined -> spawn(fun init/0);
-    _ -> already_started
-  end.
+% start() ->
+%   case whereis(?MODULE) of
+%     undefined -> spawn(fun init/0);
+%     _ -> already_started
+%   end.
 
-stop() -> ?MODULE ! quit.
+% stop() -> ?MODULE ! quit.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 init() ->
@@ -35,7 +35,7 @@ init() ->
   loop(init_gui()).
 
 init_gui() ->
-  treeview_init(state_init(#state{})).
+  top_widgets:treeview_init(state_init(#state{})).
 
 state_init(St) ->
   %% init the status bar
@@ -43,32 +43,32 @@ state_init(St) ->
   ssnd(statusbar1,'Gtk_statusbar_push',[Id,"connected"]),
   state_disc(St#state{statusbar_ctxt = Id}).
 
-treeview_init(St) ->
-  %% the tree view columns
-  Cols = [#col{title="Proc",attr="text",data_col=0,type=string},
-          #col{title="Size",attr="text",data_col=1,type=integer},
-          #col{title="Msgq",attr="text",data_col=2,type=integer},
-          #col{title="Reds",attr="text",data_col=3,type=integer}],
-  lists:foreach(fun(C) -> treeview_column(C) end, Cols),
+% treeview_init(St) ->
+%   %% the tree view columns
+%   Cols = [#col{title="Proc",attr="text",data_col=0,type=string},
+%           #col{title="Size",attr="text",data_col=1,type=integer},
+%           #col{title="Msgq",attr="text",data_col=2,type=integer},
+%           #col{title="Reds",attr="text",data_col=3,type=integer}],
+%   lists:foreach(fun(C) -> treeview_column(C) end, Cols),
 
-  %% create the model (a list_store)
-  LS = ssnd([],'Gtk_list_store_newv',[length(Cols),[C#col.type||C<-Cols]]),
+%   %% create the model (a list_store)
+%   LS = ssnd([],'Gtk_list_store_newv',[length(Cols),[C#col.type||C<-Cols]]),
 
-  %% associate the model with the view
-  ssnd(treeview1,'Gtk_tree_view_set_model',[LS]),
+%   %% associate the model with the view
+%   ssnd(treeview1,'Gtk_tree_view_set_model',[LS]),
 
-  St#state{treeview=#treeview{cols = Cols,
-                           store = LS}}.
+%   St#state{treeview=#treeview{cols = Cols,
+%                            store = LS}}.
 
-treeview_column(#col{title=Title,attr=Attr,data_col=Col}) ->
-  %% create a tree view column
-  TreeViewCol = ssnd([],'Gtk_tree_view_column_new',[]),
-  TextRend = ssnd([],'Gtk_cell_renderer_text_new',[]),
-  ssnd(TreeViewCol,'Gtk_tree_view_column_pack_start',[TextRend,false]),
-  ssnd(TreeViewCol,'Gtk_tree_view_column_set_title',[Title]),
-  ssnd(TreeViewCol,'Gtk_tree_view_column_add_attribute',[TextRend,Attr,Col]),
-  ssnd(TreeViewCol,'Gtk_tree_view_column_set_resizable',[true]),
-  ssnd(treeview1,'Gtk_tree_view_append_column',[TreeViewCol]).
+% treeview_column(#col{title=Title,attr=Attr,data_col=Col}) ->
+%   %% create a tree view column
+%   TreeViewCol = ssnd([],'Gtk_tree_view_column_new',[]),
+%   TextRend = ssnd([],'Gtk_cell_renderer_text_new',[]),
+%   ssnd(TreeViewCol,'Gtk_tree_view_column_pack_start',[TextRend,false]),
+%   ssnd(TreeViewCol,'Gtk_tree_view_column_set_title',[Title]),
+%   ssnd(TreeViewCol,'Gtk_tree_view_column_add_attribute',[TextRend,Attr,Col]),
+%   ssnd(TreeViewCol,'Gtk_tree_view_column_set_resizable',[true]),
+%   ssnd(treeview1,'Gtk_tree_view_append_column',[TreeViewCol]).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,7 +139,7 @@ populate_list_row(LS,[Col|Cols],[Data|Datas]) ->
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 gladefile() ->
-  filename:join([get_priv_dir(), "gtk-2.0", ?MODULE]) ++ ".glade".
+  filename:join([get_priv_dir(), "gtk-2.0", "top"]) ++ ".glade".
 
 get_priv_dir() ->
   get_priv_dir(top).
