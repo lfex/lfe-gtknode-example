@@ -139,7 +139,7 @@ populate_list_row(LS,[Col|Cols],[Data|Datas]) ->
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 gladefile() ->
-  filename:join([get_priv_dir(), "gtk", ?MODULE]) ++ ".glade".
+  filename:join([get_priv_dir(), "gtk-2.0", ?MODULE]) ++ ".glade".
 
 get_priv_dir() ->
   get_priv_dir(top).
