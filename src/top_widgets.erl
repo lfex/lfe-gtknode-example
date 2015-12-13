@@ -8,10 +8,10 @@
 
 treeview_init(St) ->
   %% the tree view columns
-  Cols = [#col{title="Proc",attr="text",data_col=0,type=string},
+  Cols = [#col{title="Process",attr="text",data_col=0,type=string},
           #col{title="Size",attr="text",data_col=1,type=integer},
-          #col{title="Msgq",attr="text",data_col=2,type=integer},
-          #col{title="Reds",attr="text",data_col=3,type=integer}],
+          #col{title="Message Queue",attr="text",data_col=2,type=integer},
+          #col{title="Reduction Count",attr="text",data_col=3,type=integer}],
   lists:foreach(fun(C) -> treeview_column(C) end, Cols),
 
   %% create the model (a list_store)
