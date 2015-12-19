@@ -14,24 +14,13 @@
 -include("include/top.hrl").
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% start() ->
-%   case whereis(?MODULE) of
-%     undefined -> spawn(fun init/0);
-%     _ -> already_started
-%   end.
-
-% stop() -> ?MODULE ! quit.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 init() ->
+  gtk:start(?MODULE),
   %% start the c-node and it's port handler
-  logjam:debug(?MODULE, 'init/0', "Starting GTK ..."),
-  gtknode:start(?MODULE),
-
+  'gtk.rc':parse(?MODULE, ?GTK_VERSION, top),
   %% load the glade file into the c-node
-  ssnd([],'GN_glade_init',[get_gladefile()]),
-  ssnd([], 'Gtk_rc_parse', [get_rcfile()]),
-  loop(init_gui()).
+  'gtk.glade':init(?MODULE, ?GTK_VERSION, top),
+    loop(init_gui()).
 
 init_gui() ->
   top_widgets:treeview_init(state_init(#app{})).
@@ -41,33 +30,6 @@ state_init(St) ->
   Id = ssnd(statusbar1,'Gtk_statusbar_get_context_id',["state"]),
   ssnd(statusbar1,'Gtk_statusbar_push',[Id,"connected"]),
   state_disc(St#app{statusbar_ctxt = Id}).
-
-% treeview_init(St) ->
-%   %% the tree view columns
-%   Cols = [#col{title="Proc",attr="text",data_col=0,type=string},
-%           #col{title="Size",attr="text",data_col=1,type=integer},
-%           #col{title="Msgq",attr="text",data_col=2,type=integer},
-%           #col{title="Reds",attr="text",data_col=3,type=integer}],
-%   lists:foreach(fun(C) -> treeview_column(C) end, Cols),
-
-%   %% create the model (a list_store)
-%   LS = ssnd([],'Gtk_list_store_newv',[length(Cols),[C#col.type||C<-Cols]]),
-
-%   %% associate the model with the view
-%   ssnd(treeview1,'Gtk_tree_view_set_model',[LS]),
-
-%   St#state{treeview=#treeview{cols = Cols,
-%                            store = LS}}.
-
-% treeview_column(#col{title=Title,attr=Attr,data_col=Col}) ->
-%   %% create a tree view column
-%   TreeViewCol = ssnd([],'Gtk_tree_view_column_new',[]),
-%   TextRend = ssnd([],'Gtk_cell_renderer_text_new',[]),
-%   ssnd(TreeViewCol,'Gtk_tree_view_column_pack_start',[TextRend,false]),
-%   ssnd(TreeViewCol,'Gtk_tree_view_column_set_title',[Title]),
-%   ssnd(TreeViewCol,'Gtk_tree_view_column_add_attribute',[TextRend,Attr,Col]),
-%   ssnd(TreeViewCol,'Gtk_tree_view_column_set_resizable',[true]),
-%   ssnd(treeview1,'Gtk_tree_view_append_column',[TreeViewCol]).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,41 +99,6 @@ populate_list_row(LS,[Col|Cols],[Data|Datas]) ->
   populate_list_row(LS,Cols,Datas).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-get_gladefile() ->
-  filename:join([get_priv_dir(), ?GTK_VERSION, "top"]) ++ ".glade".
+ssnd(Widget, Command, Args) ->
+  gtk:ssnd(?MODULE, Widget, Command, Args).
 
-get_rcfile() ->
-  filename:join([get_priv_dir(), ?GTK_VERSION, "gtkrc"]).
-
-get_priv_dir() ->
-  get_priv_dir(top).
-
-get_priv_dir(App) ->
-  case code:priv_dir(App) of
-    {error, bad_name} ->
-      PrivDir = "priv";
-    PrivDir ->
-      ok
-  end,
-  PrivDir.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ssnd([],Cmd,Args) -> snd(Cmd,Args);
-ssnd(Wid,Cmd,Args) -> snd(Cmd,[Wid|Args]).
-
-snd(Cmd, Args) ->
-  %logjam:debug(?MODULE, 'snd/2', "Sending command ~p with args ~p ...", [Cmd, Args]),
-  ?MODULE ! {self(),[{Cmd,Args}]},
-  receive
-    {?MODULE,{reply,[{ok,Rep}]}} ->
-      case Rep of
-        void ->
-          Rep;
-        _ ->
-          %logjam:debug(?MODULE, 'snd/2', "Got response: ~p", [Rep]),
-          Rep
-      end;
-    {?MODULE,{reply,[{error,Rep}]}} ->
-      logjam:error(?MODULE, 'snd/2', "Got error: ~p", [Rep]),
-      erlang:error({Cmd,Args,Rep})
-  end.

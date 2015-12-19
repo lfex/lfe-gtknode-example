@@ -12,9 +12,9 @@
     (snd sender command (cons widget args))))
 
 (defun snd (sender command args)
-  (logjam:debug `#(c ,(logjam:caller))
-                "Sending to '~p' the command ~p with args ~p ..."
-                `(,sender ,command ,args))
+  ; (logjam:debug `#(c ,(logjam:caller))
+  ;               "Sending to '~p' the command ~p with args ~p ..."
+  ;               `(,sender ,command ,args))
   (! sender `#(,(self) (#(,command ,args))))
   (receive
     (`#(,sender #(reply (#(ok ,rep))))
@@ -22,7 +22,7 @@
         ('void
           rep)
         (_
-          (logjam:debug `#(c ,(logjam:caller)) "Got response: ~p" `(,rep))
+          ;;(logjam:debug `#(c ,(logjam:caller)) "Got response: ~p" `(,rep))
           rep)))
     (`#(,sender #(reply (#(error ,rep))))
       (logjam:error `#(c ,(logjam:caller)) "Got error: ~p" `(,rep))
