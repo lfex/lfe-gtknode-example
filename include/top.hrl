@@ -1,0 +1,3 @@
+-record(state, {statusbar_ctxt, treeview}).
+-record(treeview, {store, cols=[]}).
+-record(col, {title, attr, data_col, type}).
