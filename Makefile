@@ -12,9 +12,7 @@ build:
 	rebar compile
 
 run:
-	erl \
-	-pa ./ebin -pa ./deps/gtknode/ebin \
-	-pa ./ebin -pa ./deps/lfe/ebin \
+	./deps/lfe/bin/lfe -pa ./ebin \
 	-sname test -s top
 
 .PHONY: deps
