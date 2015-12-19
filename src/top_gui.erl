@@ -11,9 +11,7 @@
 
 -import(filename,[join/1,dirname/1]).
 
--record(state, {statusbar_ctxt,treeview}).
--record(treeview,{store,cols=[]}).
--record(col,{title,attr,data_col,type}).
+-include("include/top.hrl").
 
 -define(GTK_VERSION, "gtk-2.0").
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -28,6 +26,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 init() ->
   %% start the c-node and it's port handler
+  logjam:debug(?MODULE, 'init/0', "Starting GTK ..."),
   gtknode:start(?MODULE),
 
   %% load the glade file into the c-node
@@ -162,8 +161,18 @@ ssnd([],Cmd,Args) -> snd(Cmd,Args);
 ssnd(Wid,Cmd,Args) -> snd(Cmd,[Wid|Args]).
 
 snd(Cmd, Args) ->
+  %logjam:debug(?MODULE, 'snd/2', "Sending command ~p with args ~p ...", [Cmd, Args]),
   ?MODULE ! {self(),[{Cmd,Args}]},
   receive
-    {?MODULE,{reply,[{ok,Rep}]}} -> Rep;
-    {?MODULE,{reply,[{error,Rep}]}} -> erlang:error({Cmd,Args,Rep})
+    {?MODULE,{reply,[{ok,Rep}]}} ->
+      case Rep of
+        void ->
+          Rep;
+        _ ->
+          %logjam:debug(?MODULE, 'snd/2', "Got response: ~p", [Rep]),
+          Rep
+      end;
+    {?MODULE,{reply,[{error,Rep}]}} ->
+      logjam:error(?MODULE, 'snd/2', "Got error: ~p", [Rep]),
+      erlang:error({Cmd,Args,Rep})
   end.
