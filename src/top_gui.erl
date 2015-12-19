@@ -7,7 +7,7 @@
 %%%-------------------------------------------------------------------
 -module(top_gui).
 
--export([init/0,ssnd/3]).
+-export([init/0]).
 
 -import(filename,[join/1,dirname/1]).
 
@@ -23,12 +23,12 @@ init() ->
     loop(init_gui()).
 
 init_gui() ->
-  top_widgets:treeview_init(state_init(#app{})).
+  top_widgets:treeview_init(?MODULE, state_init(#app{})).
 
 state_init(St) ->
   %% init the status bar
-  Id = ssnd(statusbar1,'Gtk_statusbar_get_context_id',["state"]),
-  ssnd(statusbar1,'Gtk_statusbar_push',[Id,"connected"]),
+  Id = 'gtk.statusbar':'get-context-id'(?MODULE, statusbar1),
+  'gtk.statusbar':push(?MODULE, statusbar1, Id, "connected"),
   state_disc(St#app{statusbar_ctxt = Id}).
 
 
@@ -57,26 +57,37 @@ loop(St) ->
     X                                 -> io:fwrite("got ~p~n",[X]),loop(St)
   end.
 
-quit() -> gtknode:stop(?MODULE).
+quit() -> gtk:stop(?MODULE).
+
 conn(St) -> do_connect(),state_conn(St).
+
 disc(St) -> do_disconnect(),state_disc(St).
-hide_about(St) -> ssnd(dialog1,'Gtk_widget_hide',[]),St.
-show_about(St) -> ssnd(dialog1,'Gtk_widget_show',[]),St.
+
+hide_about(St) ->
+  'gtk.widget':hide(?MODULE, dialog1),
+  St.
+
+show_about(St) ->
+  'gtk.widget':show(?MODULE, dialog1),
+  St.
+
 update(St,Data) ->
-  ssnd(treeview1,'Gtk_widget_freeze_child_notify',[]),
+  'gtk.widget':'freeze-child-notify'(?MODULE, treeview1),
   clear(St#app.treeview),
   populate(St#app.treeview,Data),
-  ssnd(treeview1,'Gtk_widget_thaw_child_notify',[]),
+  'gtk.widget':'thaw-child-notify'(?MODULE, treeview1),
   St.
+
 state_disc(St) ->
-  ssnd(statusbar1,'Gtk_statusbar_push',[St#app.statusbar_ctxt,"disconnected"]),
-  ssnd(connect,'Gtk_widget_set_sensitive',[true]),
-  ssnd(disconnect,'Gtk_widget_set_sensitive',[false]),
+  'gtk.statusbar':push(?MODULE, statusbar1, St#app.statusbar_ctxt, "disconnected"),
+  'gtk.widget':'set-sensitive'(?MODULE, connect, true),
+  'gtk.widget':'set-sensitive'(?MODULE, disconnect, false),
   St.
+
 state_conn(St) ->
-  ssnd(statusbar1,'Gtk_statusbar_pop',[St#app.statusbar_ctxt]),
-  ssnd(connect,'Gtk_widget_set_sensitive',[false]),
-  ssnd(disconnect,'Gtk_widget_set_sensitive',[true]),
+  'gtk.statusbar':pop(?MODULE, statusbar1, St#app.statusbar_ctxt),
+  'gtk.widget':'set-sensitive'(?MODULE, connect, false),
+  'gtk.widget':'set-sensitive'(?MODULE, disconnect, true),
   St.
 
 do_connect() -> 'top-data':assert(self()).
@@ -84,21 +95,16 @@ do_disconnect() -> 'top-data':stop().
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear(#treeview{store=LS}) ->
-  ssnd(LS,'Gtk_list_store_clear',[]).
+  'gtk.liststore':clear(?MODULE, LS).
 
-populate(_TV,[]) -> ok;
-populate(TV=#treeview{store=LS,cols=Cols},[RowData|Data]) ->
-  ssnd(LS,'Gtk_list_store_append',[gtkTreeIter]),
-  populate_list_row(LS,Cols,RowData),
-  populate(TV,Data).
+populate(_TV, []) -> ok;
+populate(TV=#treeview{store=LS, cols=Cols}, [RowData|Data]) ->
+  'gtk.liststore':append(?MODULE, LS),
+  populate_list_row(LS, Cols, RowData),
+  populate(TV, Data).
 
-populate_list_row(_LS,[],[]) -> ok;
-populate_list_row(LS,[Col|Cols],[Data|Datas]) ->
-  ssnd(gval,'GN_value_set',[Data]),
-  ssnd(LS,'Gtk_list_store_set_value',[gtkTreeIter,Col#column.data_col,gval]),
-  populate_list_row(LS,Cols,Datas).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ssnd(Widget, Command, Args) ->
-  gtk:ssnd(?MODULE, Widget, Command, Args).
-
+populate_list_row(_LS, [], []) -> ok;
+populate_list_row(LS, [Col|Cols], [Data|Datas]) ->
+  'gtk.value':set(?MODULE, gval, Data),
+  'gtk.liststore':set(?MODULE, LS, gval, Col#column.data_col),
+  populate_list_row(LS,   Cols, Datas).

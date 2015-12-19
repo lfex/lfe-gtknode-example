@@ -8,3 +8,6 @@
     (priv-dir
       priv-dir)))
 
+(defun atom->int (atom)
+  (list_to_integer
+    (atom_to_list atom)))
