@@ -2,9 +2,7 @@
 
 -export([treeview_init/1]).
 
--record(state, {statusbar_ctxt,treeview}).
--record(treeview,{store,cols=[]}).
--record(col,{title,attr,data_col,type}).
+-include("include/top.hrl").
 
 treeview_init(St) ->
   %% the tree view columns
@@ -21,7 +19,7 @@ treeview_init(St) ->
   top_gui:ssnd(treeview1,'Gtk_tree_view_set_model',[LS]),
 
   St#state{treeview=#treeview{cols = Cols,
-                           store = LS}}.
+                              store = LS}}.
 
 treeview_column(#col{title=Title,attr=Attr,data_col=Col}) ->
   %% create a tree view column
