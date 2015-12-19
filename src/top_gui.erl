@@ -13,7 +13,6 @@
 
 -include("include/top.hrl").
 
--define(GTK_VERSION, "gtk-2.0").
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % start() ->
 %   case whereis(?MODULE) of
@@ -35,13 +34,13 @@ init() ->
   loop(init_gui()).
 
 init_gui() ->
-  top_widgets:treeview_init(state_init(#state{})).
+  top_widgets:treeview_init(state_init(#app{})).
 
 state_init(St) ->
   %% init the status bar
   Id = ssnd(statusbar1,'Gtk_statusbar_get_context_id',["state"]),
   ssnd(statusbar1,'Gtk_statusbar_push',[Id,"connected"]),
-  state_disc(St#state{statusbar_ctxt = Id}).
+  state_disc(St#app{statusbar_ctxt = Id}).
 
 % treeview_init(St) ->
 %   %% the tree view columns
@@ -103,17 +102,17 @@ hide_about(St) -> ssnd(dialog1,'Gtk_widget_hide',[]),St.
 show_about(St) -> ssnd(dialog1,'Gtk_widget_show',[]),St.
 update(St,Data) ->
   ssnd(treeview1,'Gtk_widget_freeze_child_notify',[]),
-  clear(St#state.treeview),
-  populate(St#state.treeview,Data),
+  clear(St#app.treeview),
+  populate(St#app.treeview,Data),
   ssnd(treeview1,'Gtk_widget_thaw_child_notify',[]),
   St.
 state_disc(St) ->
-  ssnd(statusbar1,'Gtk_statusbar_push',[St#state.statusbar_ctxt,"disconnected"]),
+  ssnd(statusbar1,'Gtk_statusbar_push',[St#app.statusbar_ctxt,"disconnected"]),
   ssnd(connect,'Gtk_widget_set_sensitive',[true]),
   ssnd(disconnect,'Gtk_widget_set_sensitive',[false]),
   St.
 state_conn(St) ->
-  ssnd(statusbar1,'Gtk_statusbar_pop',[St#state.statusbar_ctxt]),
+  ssnd(statusbar1,'Gtk_statusbar_pop',[St#app.statusbar_ctxt]),
   ssnd(connect,'Gtk_widget_set_sensitive',[false]),
   ssnd(disconnect,'Gtk_widget_set_sensitive',[true]),
   St.
@@ -134,7 +133,7 @@ populate(TV=#treeview{store=LS,cols=Cols},[RowData|Data]) ->
 populate_list_row(_LS,[],[]) -> ok;
 populate_list_row(LS,[Col|Cols],[Data|Datas]) ->
   ssnd(gval,'GN_value_set',[Data]),
-  ssnd(LS,'Gtk_list_store_set_value',[gtkTreeIter,Col#col.data_col,gval]),
+  ssnd(LS,'Gtk_list_store_set_value',[gtkTreeIter,Col#column.data_col,gval]),
   populate_list_row(LS,Cols,Datas).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

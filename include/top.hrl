@@ -1,3 +1,5 @@
--record(state, {statusbar_ctxt, treeview}).
+-define(GTK_VERSION, "gtk-2.0").
+
+-record(app, {statusbar_ctxt, treeview}).
 -record(treeview, {store, cols=[]}).
--record(col, {title, attr, data_col, type}).
+-record(column, {title, attr, data_col, type}).
