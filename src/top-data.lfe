@@ -6,14 +6,7 @@
           (stop 0)
           (get-reductions 3)))
 
-(defrecord state
-  ref
-  client
-  (old-data '())
-  (rows  100)
-  (tick 2000)
-  (key 'reds)
-  (tags '(reg mem msgq reds)))
+(include-file "include/top.lfe")
 
 (defun assert (client-pid)
   (case (whereis (MODULE))
@@ -53,12 +46,12 @@
 (defun send-data
   (((= (match-state old-data '()) state))
     (set-state-old-data state (get-proc-data state)))
-  (((= (match-state old-data old-data) state))
+  (((= (match-state old-data old-data-var) state))
     (let ((data (get-proc-data state)))
       (! (state-client state) `#(data ,(top-util:sort (state-key state)
                                                       (state-rows state)
                                                       data
-                                                      old-data)))
+                                                      old-data-var)))
       (set-state-old-data state data))))
 
 (defun get-proc-data
@@ -82,6 +75,8 @@
     (case (->str pid 'registered_name)
       ("[]"
         (->str pid 'initial_call))
+      ("()"
+        (->str pid 'initial_call))
       (x
         x))))
 
@@ -98,20 +93,20 @@
 (defun get-reductions
   (('() '() x)
     x)
-  (((cons `#(,p1 (,a ,b ,c ,r)) data)
-    (cons `#(,p2 (,_ ,_ ,_ ,old-r)) old)
+  (((cons `#(,p1 (,a ,b ,c ,r)) data-tail)
+    (cons `#(,p2 (,_ ,_ ,_ ,old-r)) old-data-tail)
     x) (when (== p1 p2))
-    (get-reductions data old (cons `(,a ,b ,c ,(- r old-r)) x)))
-  (((cons `#(,p1 ,_) data)
-    (= (cons `#(,p2 ,_) ,_) old)
+    (get-reductions data-tail old-data-tail (cons `(,a ,b ,c ,(- r old-r)) x)))
+  (((cons `#(,p1 ,_) data-tail)
+    (= (cons `#(,p2 ,_) ,_) old-data)
     x) (when (< p1 p2))
-    (get-reductions data old x))
+    (get-reductions data-tail old-data x))
   (((= (cons `#(,p1 ,_) ,_) data)
-    (cons `#(,p2 ,_) old)
+    (cons `#(,p2 ,_) old-data-tail)
     x) (when (< p2 p1))
-    (get-reductions data old x))
+    (get-reductions data old-data-tail x))
   (('() _ x)
-    (get-reductions '() '() x))
+    x)
   ((_ '() x)
-    (get-reductions '() '() x)))
+    x))
 

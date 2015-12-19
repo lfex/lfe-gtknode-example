@@ -3,6 +3,8 @@
           (stop 0)))
 
 (defun start ()
+  (logjam:setup)
+  (logjam:debug "Starting 'top' app ...")
   (case (whereis (MODULE))
     ('undefined
       (spawn #'top_gui:init/0))
