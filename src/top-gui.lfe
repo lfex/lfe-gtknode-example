@@ -6,7 +6,10 @@
 (defun init ()
   ;; start the c-node and it's port handler
   (gtk:start (MODULE))
-  (gtk.rc:parse (MODULE) (GTK-VERSION) 'top)
+  (if (== 'true (lcfg:get-in '(gtk dark-theme)))
+    (progn
+      (logjam:info "Loading dark theme confguration ...")
+      (gtk.rc:parse (MODULE) (GTK-VERSION) 'top)))
   ;; load the glade file into the c-node
   (gtk.glade:init (MODULE) (GTK-VERSION) 'top)
   (loop (init-gui)))

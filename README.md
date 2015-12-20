@@ -29,3 +29,7 @@ This will:
 In the ``File`` menu, click ``Connect``. In a few seconds you should see a list of running Erlang processes.
 
 To disable the dark theme, simply comment out the ``GTK2_RC_FILES`` setting in the ``Makefile``.
+
+### GTK Theme
+
+By default, lfe-gtknode-example uses a custom dark theme. You can skip the loading of the dark theme configuration by setting the ``gtk -> dark-theme`` value to ``false`` in the ``lfe.config`` file for this project.
