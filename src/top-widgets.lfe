@@ -3,7 +3,7 @@
 
 (include-file "include/top.lfe")
 
-(defun treeview-init (caller app-state)
+(defun init-treeview (caller app-state)
   (let ((columns (make-columns)))
     (add-columns caller columns)
     (let ((list-store (gtk.liststore:new caller

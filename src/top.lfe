@@ -1,13 +1,12 @@
 (defmodule top
-  (export (start 0)
-          (stop 0)))
+  (export all))
 
 (defun start ()
   (logjam:setup)
   (logjam:debug "Starting 'top' app ...")
   (case (whereis (MODULE))
     ('undefined
-      (spawn #'top_gui:init/0))
+      (spawn #'top-gui:init/0))
     (_
       'already-started)))
 

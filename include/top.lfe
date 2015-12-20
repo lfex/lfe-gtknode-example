@@ -20,3 +20,5 @@
   attr
   data-col
   type)
+
+(defun GTK-VERSION () "gtk-2.0")
