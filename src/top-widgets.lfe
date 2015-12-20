@@ -15,10 +15,6 @@
         app-state
         (make-treeview columns columns store list-store)))))
 
-(defun treeview-column
-  (((match-column title title attr attr data-col data-col))
-    ))
-
 (defun make-columns ()
   (list
     (make-column title "Process"
@@ -41,7 +37,7 @@
 (defun add-columns (caller columns)
   (lists:foreach
     (lambda (column)
-      (top_widgets:treeview_column caller column))
+      (treeview-column caller column))
     columns))
 
 (defun get-types (columns)
@@ -49,3 +45,17 @@
     (lambda (column)
       (column-type column))
     columns))
+
+(defun treeview-column
+  ((caller (match-column title title attr attr data-col data-column))
+    (let ((renderer (gtk.cellrenderertext:new caller))
+          (tree-column (gtk.treeviewcolumn:new caller)))
+      (gtk.treeviewcolumn:pack-start caller tree-column renderer 'false)
+      (gtk.treeviewcolumn:set-title caller tree-column title)
+      (gtk.treeviewcolumn:add-attribute caller
+                                        tree-column
+                                        renderer
+                                        attr
+                                        data-column)
+      (gtk.treeviewcolumn:set-resizable caller tree-column 'true)
+      (gtk.treeview:append caller 'treeview1 tree-column))))
