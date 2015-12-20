@@ -23,7 +23,7 @@ init() ->
     loop(init_gui()).
 
 init_gui() ->
-  top_widgets:treeview_init(?MODULE, state_init(#app{})).
+  'top-widgets':'treeview-init'(?MODULE, state_init(#app{})).
 
 state_init(St) ->
   %% init the status bar

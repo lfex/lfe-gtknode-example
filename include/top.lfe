@@ -13,7 +13,7 @@
 
 (defrecord treeview
   store
-  (cols ()))
+  (columns ()))
 
 (defrecord column
   title
