@@ -2,11 +2,11 @@
   (export all))
 
 (defun start (name)
-  (logjam:info `#(c ,(logjam:caller)) "Starting GTK '~p' ..." `(,name))
+  (logjam:info `#(c ,(logjam:caller)) "Starting GTK ~p ..." `(,name))
   (gtknode:start name))
 
 (defun stop (name)
-  (logjam:info `#(c ,(logjam:caller)) "Stopping GTK '~p' ..." `(,name))
+  (logjam:info `#(c ,(logjam:caller)) "Stopping GTK ~p ..." `(,name))
   (gtknode:stop name))
 
 (defun ssnd (sender command)
