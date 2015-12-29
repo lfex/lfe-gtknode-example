@@ -2,10 +2,10 @@
   (export all))
 
 (defun hide (caller widget-id)
-  (gtk:ssnd caller 'Gtk_widget_hide '()))
+  (gtk:ssnd caller widget-id 'Gtk_widget_hide '()))
 
 (defun show (caller widget-id)
-  (gtk:ssnd caller 'Gtk_widget_show '()))
+  (gtk:ssnd caller widget-id 'Gtk_widget_show '()))
 
 (defun freeze-child-notify (caller widget-id)
   (gtk:ssnd caller widget-id 'Gtk_widget_freeze_child_notify '()))
