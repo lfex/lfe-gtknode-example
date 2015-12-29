@@ -1,4 +1,5 @@
 (defmodule gtk
+  (behaviour gen_server)
   (export all))
 
 (defun start (name)
@@ -9,13 +10,13 @@
   (logjam:info `#(c ,(logjam:caller)) "Stopping GTK ~p ..." `(,name))
   (gtknode:stop name))
 
-(defun ssnd (sender command)
+(defun cmd (sender command)
   (snd sender command '()))
 
-(defun ssnd (sender command args)
+(defun cmd (sender command args)
   (snd sender command args))
 
-(defun ssnd
+(defun cmd
   ((sender '() command args)
     (snd sender command args))
   ((sender widget command args)
