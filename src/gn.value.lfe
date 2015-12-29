@@ -1,4 +1,4 @@
-(defmodule gtk.value
+(defmodule gn.value
   (export all))
 
 (defun set (caller key value)

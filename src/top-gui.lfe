@@ -113,6 +113,6 @@
   ((_ '() '())
     'ok)
   ((store (cons col cols) (cons row data))
-    (gtk.value:set (MODULE) 'gval row)
+    (gn.value:set (MODULE) 'gval row)
     (gtk.liststore:set (MODULE) store 'gval (column-data-col col))
     (populate-list-row store cols data)))
