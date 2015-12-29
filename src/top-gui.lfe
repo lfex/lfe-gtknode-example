@@ -5,13 +5,13 @@
 
 (defun init ()
   ;; start the c-node and it's port handler
-  (gtk:start (MODULE))
+  (lgtk:start (MODULE))
   (if (== 'true (lcfg:get-in '(gtk dark-theme)))
     (progn
       (logjam:info "Loading dark theme confguration ...")
       (gtk.rc:parse (MODULE) (GTK-VERSION) 'top)))
   ;; load the glade file into the c-node
-  (gtk.glade:init (MODULE) (GTK-VERSION) 'top)
+  (gn.glade:init (MODULE) (GTK-VERSION) 'top)
   (loop (init-gui)))
 
 (defun init-gui ()
@@ -49,7 +49,7 @@
 (defun quit (state)
   (logjam:debug `#(c ,(logjam:caller)) "Shutting down ...")
   (disconnect state)
-  (gtk:stop (MODULE))
+  (lgtk:stop (MODULE))
   (logjam:debug `#(c ,(logjam:caller)) "Exiting ..."))
 
 (defun connect (state)

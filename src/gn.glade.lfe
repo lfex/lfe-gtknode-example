@@ -2,7 +2,7 @@
   (export all))
 
 (defun init (sender gtk-version app-name)
-  (gtk:cmd sender
+  (lgtk:cmd sender
            '()
            'GN_glade_init
            `(,(get-file gtk-version app-name))))
